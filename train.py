@@ -3,14 +3,11 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from datasets.robot_hand import RobotHandDataset
-import matplotlib.pyplot as plt
+import argparse
 
 from utils.model_utils import name2model
 
-train_losses = []
-eval_losses = []
-
-def train(model_name, dataroot='/mnt/d/data/robot_hand', num_epochs=10):
+def main(model_name, dataroot, num_epochs=10):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
     model = name2model[model_name]()
@@ -46,7 +43,6 @@ def train(model_name, dataroot='/mnt/d/data/robot_hand', num_epochs=10):
             epoch_loss += loss
         
         epoch_loss /= len_dataloader
-        train_losses.append(epoch_loss)
         
         # get eval set loss
         with torch.no_grad():
@@ -61,7 +57,6 @@ def train(model_name, dataroot='/mnt/d/data/robot_hand', num_epochs=10):
                 eval_loss += loss
             
             eval_loss /= len(data_loader_eval)
-            eval_losses.append(eval_loss)
         
         scheduler.step()
         log_text = f'Epoch: {epoch+1}, Loss: {epoch_loss}, Eval Loss: {eval_loss}'
@@ -74,4 +69,37 @@ def train(model_name, dataroot='/mnt/d/data/robot_hand', num_epochs=10):
 
         torch.save(model.state_dict(), os.path.join(log_path, f'{model_name}_{epoch+1}.pth'))
 
-train(model_name='resnet152', num_epochs=30)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model_name",
+        default=None,
+        type=str,
+        help="",
+    )
+    parser.add_argument(
+        "--logpath",
+        default='logs',
+        type=str,
+        help="path to store the log file",
+    )
+    parser.add_argument(
+        "--dataroot",
+        default='scratch/dm4524/data/robot_hand',
+        type=str,
+        help="path to the dataset root",
+    )
+    parser.add_argument(
+        "--epoch",
+        default=30,
+        type=int,
+        help="number of epochs",
+    )
+    args = parser.parse_args()
+    model_name = args.model_name
+    logpath = args.logpath
+    dataroot = args.dataroot
+    num_epochs = args.epoch
+
+    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot)

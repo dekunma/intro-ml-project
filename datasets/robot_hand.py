@@ -26,11 +26,8 @@ class RobotHandDataset:
             idx += self.train_size
 
         base_path_x = os.path.join(self.base_path, 'X', str(idx))
-
-
         
         image_input = None
-
 
         for ii in [0,1,2]:
             rgb_img = Image.open(os.path.join(base_path_x, f'rgb/{ii}.png'))
@@ -43,7 +40,6 @@ class RobotHandDataset:
                 image_input = torch.cat((rgb_img, depth_img), dim=0)
             else:
                 image_input = torch.cat((image_input, rgb_img, depth_img), dim=0)
-
 
         # field id
         if len(self.field_ids) != self.dataset_len:

@@ -7,21 +7,27 @@ import argparse
 
 from utils.model_utils import name2model
 
-def main(model_name, dataroot, num_epochs=10):
+def main(model_name, dataroot, num_epochs=10, mode='head'):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
     model = name2model[model_name]()
     model.to(device)
 
-    dataset = RobotHandDataset(split='train', dataroot=dataroot, mode='head')
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=4)
+    batch_size = 32
+
+    dataset = RobotHandDataset(split='train', dataroot=dataroot, mode=mode)
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
     dataset_eval = RobotHandDataset(split='train', dataroot=dataroot, mode='tail')
-    data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=4)
+    data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=batch_size)
         
     params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.Adam(params, lr=0.0001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
+    optimizer = torch.optim.Adam(params, lr=0.001)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.5)
 
+    log_path = f'logs/{model_name}'
+    os.makedirs(log_path, exist_ok=True)
+    log_file = open(f'{log_path}/log.txt', 'w')
+    
     len_dataloader = len(data_loader)
 
     for epoch in range(num_epochs):
@@ -45,26 +51,24 @@ def main(model_name, dataroot, num_epochs=10):
         epoch_loss /= len_dataloader
         
         # get eval set loss
-        with torch.no_grad():
-            model.eval()
-            eval_loss = 0
-            print('Evaluating...')
-            for imgs, labels in tqdm(data_loader_eval):
-                imgs = imgs.to(device)
-                labels = labels.to(device) * 1000
-                output = model(imgs)
-                loss = nn.MSELoss()(output, labels)
-                eval_loss += loss
-            
-            eval_loss /= len(data_loader_eval)
+        eval_loss = 0
+        if mode != "full":
+            with torch.no_grad():
+                model.eval()
+                print('Evaluating...')
+                for imgs, labels in tqdm(data_loader_eval):
+                    imgs = imgs.to(device)
+                    labels = labels.to(device) * 1000
+                    output = model(imgs)
+                    loss = nn.MSELoss()(output, labels)
+                    eval_loss += loss
+                
+                eval_loss /= len(data_loader_eval)
         
         scheduler.step()
         log_text = f'Epoch: {epoch+1}, Loss: {epoch_loss}, Eval Loss: {eval_loss}'
         print(log_text)
 
-        log_path = f'logs/{model_name}'
-        os.makedirs(log_path, exist_ok=True)
-        log_file = open(f'{log_path}/log.txt', 'w')
         log_file.write(log_text + '\n')
 
         torch.save(model.state_dict(), os.path.join(log_path, f'{model_name}_{epoch+1}.pth'))
@@ -86,7 +90,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataroot",
-        default='scratch/dm4524/data/robot_hand',
+        default='/scratch/dm4524/data/robot_hand',
         type=str,
         help="path to the dataset root",
     )
@@ -96,10 +100,17 @@ if __name__ == "__main__":
         type=int,
         help="number of epochs",
     )
+    parser.add_argument(
+        "--mode",
+        default="head",
+        type=str,
+        help="[head / full]",
+    )
     args = parser.parse_args()
     model_name = args.model_name
     logpath = args.logpath
     dataroot = args.dataroot
     num_epochs = args.epoch
+    mode = args.mode
 
-    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot)
+    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode)

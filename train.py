@@ -2,10 +2,11 @@ import os
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-from datasets.robot_hand import RobotHandDataset
+
 import argparse
 
 from utils.model_utils import name2model
+from utils.dataset_utils import get_dataset
 
 def main(model_name, dataroot, num_epochs=10, mode='head'):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -15,14 +16,16 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
 
     batch_size = 32
 
-    dataset = RobotHandDataset(split='train', dataroot=dataroot, mode=mode)
+
+    dataset = get_dataset(model_name, 'train', dataroot, mode)
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
-    dataset_eval = RobotHandDataset(split='train', dataroot=dataroot, mode='tail')
+
+    dataset_eval = get_dataset(model_name, 'train', dataroot, 'tail')
     data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=batch_size)
         
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.Adam(params, lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=15, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
 
     log_path = f'logs/{model_name}'
     os.makedirs(log_path, exist_ok=True)

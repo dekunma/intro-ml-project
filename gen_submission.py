@@ -4,11 +4,11 @@ from tqdm import tqdm
 import argparse
 import os
 
-from datasets.robot_hand import RobotHandDataset
 from utils.model_utils import name2model
+from utils.dataset_utils import get_dataset
 
 def main(model_name, epoch, dataroot):
-    dataset = RobotHandDataset('test', dataroot=dataroot, mode='full')
+    dataset = get_dataset(model_name, 'test', dataroot=dataroot, mode='full')
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=1)
 
     model = name2model[model_name]()

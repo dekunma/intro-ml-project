@@ -16,16 +16,15 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
 
     batch_size = 32
 
-
     dataset = get_dataset(model_name, 'train', dataroot, mode)
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2)
 
     dataset_eval = get_dataset(model_name, 'train', dataroot, 'tail')
     data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=batch_size)
         
-    params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.Adam(params, lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
+    loss_function = nn.MSELoss()
 
     log_path = f'logs/{model_name}'
     os.makedirs(log_path, exist_ok=True)
@@ -43,7 +42,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
             imgs = imgs.to(device)
             labels = labels.to(device) * 1000
             output = model(imgs)
-            loss = nn.MSELoss()(output, labels)
+            loss = loss_function(output, labels)
 
             optimizer.zero_grad()
             loss.backward()
@@ -54,7 +53,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
         epoch_loss /= len_dataloader
         
         # get eval set loss
-        eval_loss = 0
+        eval_loss = -1
         if mode != "full":
             with torch.no_grad():
                 model.eval()

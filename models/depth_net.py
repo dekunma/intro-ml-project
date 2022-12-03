@@ -1,10 +1,18 @@
 import torch.nn as nn
 
+class PrintLayer(nn.Module):
+    def __init__(self):
+        super(PrintLayer, self).__init__()
+    
+    def forward(self, x):
+        # Do your print / debug stuff here
+        print(x)
+        return x
 
 class DepthNet(nn.Module):
     def __init__(self) -> None:
         super().__init__()
-        conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
+        conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
         conv2 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
         pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
         conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)

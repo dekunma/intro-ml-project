@@ -34,9 +34,6 @@ from torchvision.models import ResNet50_Weights
 
 def resnet50():
     model = torchvision.models.resnet50(weights=ResNet50_Weights.DEFAULT)
-    for param in model.parameters():
-        param.requires_grad = False
-
     # change input shape
     # https://discuss.pytorch.org/t/transfer-learning-usage-with-different-input-size/20744/13
     # first_conv_layer = nn.Conv2d(12, 3, kernel_size=1, stride=1, bias=True)

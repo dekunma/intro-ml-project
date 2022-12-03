@@ -4,6 +4,7 @@ from PIL import Image
 from torchvision import transforms
 import torch
 import pickle
+import cv2
 
 class RobotHandDataset:
     def __init__(self, split, dataroot, mode='full'):
@@ -21,25 +22,34 @@ class RobotHandDataset:
         self.train_size = int(self.dataset_len * 0.7)
         self.mode = mode
     
+    # https://discuss.pytorch.org/t/how-to-normalize-uint16-depth-image-for-training/96445/2
+    def _normalize_depth_image(self, depth_img):
+        depth_img = depth_img / 1000
+        min_depth = 0
+        max_depth = 65.535
+        depth_img = (depth_img - min_depth) / (max_depth - min_depth)
+        return depth_img
+
+    def _normalize_rgb_image(self, rgb_img):
+        rgb_img = rgb_img / 255
+        return rgb_img
+
     def __getitem__(self, idx):
         if self.mode == 'tail':
             idx += self.train_size
 
         base_path_x = os.path.join(self.base_path, 'X', str(idx))
         
-        image_input = None
+        # rgb
+        image_input = cv2.imread(os.path.join(base_path_x, f'rgb/0.png'))
+        image_input = self._normalize_rgb_image(image_input)
+        image_input = torch.from_numpy(image_input).permute(2, 0, 1).float()
 
-        for ii in [0,1,2]:
-            rgb_img = Image.open(os.path.join(base_path_x, f'rgb/{ii}.png'))
-            rgb_img = self.transforms(rgb_img)
-
-            depth_img = np.load(os.path.join(base_path_x, 'depth.npy'))[ii]
-            depth_img = Image.fromarray(depth_img)
-            depth_img = self.transforms(depth_img)
-            if image_input == None:
-                image_input = torch.cat((rgb_img, depth_img), dim=0)
-            else:
-                image_input = torch.cat((image_input, rgb_img, depth_img), dim=0)
+        depth_img = np.load(os.path.join(base_path_x, 'depth.npy'))[0]
+        depth_img = torch.from_numpy(depth_img)
+        depth_img = self._normalize_depth_image(depth_img)
+        depth_img = depth_img.unsqueeze(0)
+        image_input = torch.cat((image_input, depth_img), dim=0)
 
         # field id
         if len(self.field_ids) != self.dataset_len:

@@ -8,7 +8,7 @@ import argparse
 from utils.model_utils import name2model
 from utils.dataset_utils import get_dataset
 
-def main(model_name, dataroot, num_epochs=10, mode='head'):
+def main(model_name, dataroot, num_epochs=10, mode='head', resume=None):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     
     model = name2model[model_name]()
@@ -29,6 +29,15 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
     log_path = f'logs/{model_name}'
     os.makedirs(log_path, exist_ok=True)
     log_file = open(f'{log_path}/log.txt', 'w')
+
+    if resume is not None:
+        print(f'Loading checkpoint from epoch {resume}...')
+        checkpoint = os.path.join(log_path, f'{model_name}_{resume}.pth')
+        checkpoint = torch.load(checkpoint)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        print(f'Resumed from epoch {resume}.')
     
     len_dataloader = len(data_loader)
 
@@ -73,7 +82,14 @@ def main(model_name, dataroot, num_epochs=10, mode='head'):
 
         log_file.write(log_text + '\n')
 
-        torch.save(model.state_dict(), os.path.join(log_path, f'{model_name}_{epoch+1}.pth'))
+        if (epoch + 1) % 5 == 0 or (epoch + 1) == num_epochs or epoch == 0:
+            save_dict = {
+                "epoch": epoch,
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "scheduler_state_dict": scheduler.state_dict(),
+            }
+            torch.save(save_dict, os.path.join(log_path, f'{model_name}_{epoch+1}.pth'))
 
 
 if __name__ == "__main__":
@@ -108,11 +124,18 @@ if __name__ == "__main__":
         type=str,
         help="[head / full]",
     )
+    parser.add_argument(
+        "--resume",
+        default=None,
+        type=int,
+        help="Resume from which epoch",
+    )
     args = parser.parse_args()
     model_name = args.model_name
     logpath = args.logpath
     dataroot = args.dataroot
     num_epochs = args.epoch
     mode = args.mode
+    resume = args.resume
 
-    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode)
+    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode, resume=resume)

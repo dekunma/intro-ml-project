@@ -8,4 +8,4 @@
 
 cd /scratch/dm4524/intro-ml-project
 conda activate cs473
-python train.py --model_name=pose_resnet152 --epoch=100 --mode=full
+python train.py --model_name=pose_resnet152 --epoch=150 --mode=full

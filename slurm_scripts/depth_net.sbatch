@@ -8,4 +8,4 @@
 
 cd /scratch/dm4524/intro-ml-project
 conda activate cs473
-python train.py --model_name depth_net --mode full --epoch 100
+python train.py --model_name depth_net --mode full --epoch 150

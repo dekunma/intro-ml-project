@@ -1,0 +1,27 @@
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+Using config file: ./experiments/pose_resnet152/pose_resnet152_1.yaml
+{'model_name': 'pose_resnet', 'experiment_name': 'pose_resnet_1', 'batch_size': 32, 'lr': 0.001, 'lr_factor': 0.1, 'lr_step': [90, 120], 'resume': None, 'epoch': 140}
+Traceback (most recent call last):
+  File "train.py", line 165, in <module>
+    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode, resume=resume, config=config)
+  File "train.py", line 33, in main
+    model = name2model[current_config['model_name']]()
+KeyError: 'pose_resnet'

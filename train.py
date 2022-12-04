@@ -21,6 +21,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         'lr_factor': 0.1,
         'lr_step': [90, 120],
         'resume': resume,
+        'num_epochs': num_epochs,
     }
 
     # load config
@@ -58,11 +59,11 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
     
     len_dataloader = len(data_loader)
 
-    for epoch in range(num_epochs):
+    for epoch in range(current_config['num_epochs']):
         model.train()
         i = 0    
         epoch_loss = 0
-        tqdm_bar = tqdm(data_loader, desc="Epoch {}/{}".format(epoch+1, num_epochs))
+        tqdm_bar = tqdm(data_loader, desc="Epoch {}/{}".format(epoch+1, current_config['num_epochs']))
         for imgs, labels in tqdm_bar:
             i += 1
             imgs = imgs.to(device)
@@ -99,7 +100,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
 
         log_file.write(log_text + '\n')
 
-        if (epoch + 1) % 5 == 0 or (epoch + 1) == num_epochs or epoch == 0:
+        if (epoch + 1) % 5 == 0 or (epoch + 1) == current_config['num_epochs'] or epoch == 0:
             save_dict = {
                 "epoch": epoch,
                 "model_state_dict": model.state_dict(),

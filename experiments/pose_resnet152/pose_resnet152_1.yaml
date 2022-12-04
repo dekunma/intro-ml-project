@@ -1,8 +1,8 @@
-experiment_name: pose_resnet_1
-model_name: pose_resnet
+experiment_name: pose_resnet152_1
+model_name: pose_resnet152
 
 batch_size: 32
-epoch: 140
+num_epochs: 140
 lr: 0.001
 lr_factor: 0.1
 lr_step: 

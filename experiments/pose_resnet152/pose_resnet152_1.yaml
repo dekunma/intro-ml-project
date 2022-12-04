@@ -1,0 +1,11 @@
+experiment_name: pose_resnet_1
+model_name: pose_resnet
+
+batch_size: 32
+epoch: 140
+lr: 0.001
+lr_factor: 0.1
+lr_step: 
+- 90
+- 120
+resume: null

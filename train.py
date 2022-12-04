@@ -7,37 +7,54 @@ import argparse
 
 from utils.model_utils import name2model
 from utils.dataset_utils import get_dataset
+import yaml
 
-def main(model_name, dataroot, num_epochs=10, mode='head', resume=None):
+def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=None):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+    # default config
+    current_config = {
+        'model_name': model_name,
+        'experiment_name': model_name,
+        'batch_size': 32,
+        'lr': 1e-3,
+        'lr_factor': 0.1,
+        'lr_step': [90, 120],
+        'resume': resume,
+    }
+
+    # load config
+    if config is not None:
+        config_file = yaml.load(open(config, 'r'), Loader=yaml.FullLoader)
+        current_config.update(config_file)
+        print('Using config file: {}'.format(config))
+        print(current_config)
     
-    model = name2model[model_name]()
+    model = name2model[current_config['model_name']]()
     model.to(device)
 
-    batch_size = 32
-
-    dataset = get_dataset(model_name, 'train', dataroot, mode)
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+    dataset = get_dataset(current_config['model_name'], 'train', dataroot, mode)
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=current_config['batch_size'], shuffle=True, num_workers=2)
 
     dataset_eval = get_dataset(model_name, 'train', dataroot, 'tail')
-    data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=batch_size)
+    data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=current_config['batch_size'], shuffle=False, num_workers=2)
         
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=current_config['lr'])
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, current_config['lr_step'], current_config['lr_factor'])
     loss_function = nn.MSELoss()
 
-    log_path = f'logs/{model_name}'
+    log_path = f'logs/{current_config["experiment_name"]}'
     os.makedirs(log_path, exist_ok=True)
     log_file = open(f'{log_path}/log.txt', 'w')
 
-    if resume is not None:
-        print(f'Loading checkpoint from epoch {resume}...')
-        checkpoint = os.path.join(log_path, f'{model_name}_{resume}.pth')
+    if current_config['resume'] is not None:
+        print(f"Loading checkpoint from epoch {current_config['resume']}...")
+        checkpoint = os.path.join(log_path, f"{current_config['experiment_name']}_{current_config['resume']}.pth")
         checkpoint = torch.load(checkpoint)
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
-        print(f'Resumed from epoch {resume}.')
+        print(f"Resumed from epoch {current_config['resume']}.")
     
     len_dataloader = len(data_loader)
 
@@ -89,7 +106,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None):
                 "optimizer_state_dict": optimizer.state_dict(),
                 "scheduler_state_dict": scheduler.state_dict(),
             }
-            torch.save(save_dict, os.path.join(log_path, f'{model_name}_{epoch+1}.pth'))
+            torch.save(save_dict, os.path.join(log_path, f"{current_config['model_name']}_{epoch+1}.pth"))
 
 
 if __name__ == "__main__":
@@ -130,6 +147,12 @@ if __name__ == "__main__":
         type=int,
         help="Resume from which epoch",
     )
+    parser.add_argument(
+        "--config",
+        default=None,
+        type=str,
+        help="Load config from a file",
+    )
     args = parser.parse_args()
     model_name = args.model_name
     logpath = args.logpath
@@ -137,5 +160,6 @@ if __name__ == "__main__":
     num_epochs = args.epoch
     mode = args.mode
     resume = args.resume
+    config = args.config
 
-    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode, resume=resume)
+    main(model_name=model_name, num_epochs=num_epochs, dataroot=dataroot, mode=mode, resume=resume, config=config)

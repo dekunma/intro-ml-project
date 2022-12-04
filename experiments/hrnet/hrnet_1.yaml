@@ -1,0 +1,11 @@
+experiment_name: hrnet_1
+model_name: hrnet
+
+batch_size: 24
+epoch: 210
+lr: 0.001
+lr_factor: 0.1
+lr_step: 
+- 170
+- 200
+resume: null

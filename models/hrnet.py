@@ -292,7 +292,7 @@ class PoseHighResolutionNet(nn.Module):
             'num_branches': 2,
             'block': 'BASIC',
             'num_blocks': [4, 4],
-            'num_channels': [32, 64],
+            'num_channels': [48, 96],
             'fuse_method': 'SUM'
         }
 
@@ -310,7 +310,7 @@ class PoseHighResolutionNet(nn.Module):
             'num_branches': 3,
             'block': 'BASIC',
             'num_blocks': [4, 4, 4],
-            'num_channels': [32, 64, 128],
+            'num_channels': [48, 96, 192],
             'fuse_method': 'SUM'
         }
 
@@ -329,7 +329,7 @@ class PoseHighResolutionNet(nn.Module):
             'num_branches': 4,
             'block': 'BASIC',
             'num_blocks': [4, 4, 4, 4],
-            'num_channels': [32, 64, 128, 256],
+            'num_channels': [48, 96, 192, 384],
             'fuse_method': 'SUM'
         }
 
@@ -343,7 +343,7 @@ class PoseHighResolutionNet(nn.Module):
         self.stage4, pre_stage_channels = self._make_stage(
             self.stage4_cfg, num_channels, multi_scale_output=False)
 
-        self.final_layer = nn.Linear(32*56*56, 12)
+        self.final_layer = nn.Linear(48*56*56, 12)
 
         # self.pretrained_layers = cfg['MODEL']['EXTRA']['PRETRAINED_LAYERS']
 

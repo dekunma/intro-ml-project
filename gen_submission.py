@@ -12,7 +12,7 @@ def main(model_name, epoch, dataroot):
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=1)
 
     model = name2model[model_name]()
-    model.load_state_dict(torch.load(os.path.join('logs', model_name, f'{model_name}_{epoch}.pth')))
+    model.load_state_dict(torch.load(os.path.join('logs', model_name, f'{model_name}_{epoch}.pth'))['model_state_dict'])
     
     log_base_dir = os.path.join('submissions', model_name)
     os.makedirs(log_base_dir, exist_ok=True)

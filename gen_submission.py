@@ -7,16 +7,16 @@ import os
 from utils.model_utils import name2model
 from utils.dataset_utils import get_dataset
 
-def main(model_name, epoch, dataroot):
+def main(model_name, epoch, dataroot, model_path):
     dataset = get_dataset(model_name, 'test', dataroot=dataroot, mode='full')
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=1)
 
     model = name2model[model_name]()
-    model.load_state_dict(torch.load(os.path.join('logs', model_name, f'{model_name}_{epoch}.pth'))['model_state_dict'])
+    model.load_state_dict(torch.load(os.path.join('logs', model_path, f'{model_name}_{epoch}.pth'))['model_state_dict'])
     
-    log_base_dir = os.path.join('submissions', model_name)
+    log_base_dir = os.path.join('submissions', model_path)
     os.makedirs(log_base_dir, exist_ok=True)
-    outfile = os.path.join(log_base_dir, f'{model_name}_epoch_{epoch}.csv')
+    outfile = os.path.join(log_base_dir, f'{model_path}_epoch_{epoch}.csv')
     outfile = open(outfile, 'w')
 
     titles = ['ID', 'FINGER_POS_1', 'FINGER_POS_2', 'FINGER_POS_3', 'FINGER_POS_4', 'FINGER_POS_5', 'FINGER_POS_6',
@@ -66,10 +66,17 @@ if __name__ == "__main__":
         type=int,
         help="number of epochs",
     )
+    parser.add_argument(
+        "--model_path",
+        default=None,
+        type=str,
+        help="path to model dir in logs dir",
+    )
     args = parser.parse_args()
     model_name = args.model_name
     logpath = args.logpath
     dataroot = args.dataroot
     epoch = args.epoch
+    model_path = args.model_path
 
-    main(model_name=model_name, epoch=epoch, dataroot=dataroot)
+    main(model_name=model_name, epoch=epoch, dataroot=dataroot, model_path=model_path)

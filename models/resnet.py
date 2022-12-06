@@ -1,7 +1,7 @@
 import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models import ResNet50_Weights
+from torchvision.models import ResNet50_Weights, ResNet152_Weights
 
 # https://debuggercafe.com/advanced-facial-keypoint-detection-with-pytorch/
 # class ResNet50(nn.Module):
@@ -48,7 +48,7 @@ def resnet50():
     return model
 
 def resnet152():
-    model = torchvision.models.resnet152()
+    model = torchvision.models.resnet152(weights=ResNet152_Weights.DEFAULT)
     model.conv1 = nn.Conv2d(12, 64, kernel_size=7, stride=2, padding=3,bias=False)
     model.fc = nn.Linear(2048, 12)
     return model

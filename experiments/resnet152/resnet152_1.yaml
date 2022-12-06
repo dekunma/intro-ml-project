@@ -1,0 +1,12 @@
+experiment_name: resnet152_1
+model_name: resnet152
+
+batch_size: 32
+num_epochs: 180
+lr: 0.001
+lr_factor: 0.5
+lr_step: 
+- 60
+- 90
+- 120
+resume: null

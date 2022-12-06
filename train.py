@@ -19,7 +19,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         'batch_size': 32,
         'lr': 1e-3,
         'lr_factor': 0.5,
-        'lr_step': [30, 30, 30],
+        'lr_step': [30, 60, 90],
         'resume': resume,
         'num_epochs': num_epochs,
     }

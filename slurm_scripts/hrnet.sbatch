@@ -9,4 +9,4 @@
 cd /scratch/dm4524/intro-ml-project
 conda activate cs473
 # python train.py --model_name hrnet --mode full --epoch 150
-python train.py --config=./experiments/hrnet/hrnet_1.yaml --mode=full
+python train.py --config=./experiments/hrnet/hrnet_1.yaml --mode=head

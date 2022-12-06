@@ -124,7 +124,15 @@ class PoseResNet(nn.Module):
             [4, 4, 4],
         )
 
-        self.final_layer = nn.Linear(256*56*56, 12)
+        self.final_layer = nn.Conv2d(
+            in_channels=256,
+            out_channels=12,
+            kernel_size=1,
+            stride=1,
+            padding=0
+        )
+
+        self.fc = nn.Linear(12*56*56, 12)
 
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
@@ -195,8 +203,9 @@ class PoseResNet(nn.Module):
         x = self.layer4(x)
 
         x = self.deconv_layers(x)
-        x = x.reshape(x.size(0), -1)
         x = self.final_layer(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
 
         return x
 

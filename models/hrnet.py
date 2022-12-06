@@ -343,7 +343,15 @@ class PoseHighResolutionNet(nn.Module):
         self.stage4, pre_stage_channels = self._make_stage(
             self.stage4_cfg, num_channels, multi_scale_output=False)
 
-        self.final_layer = nn.Linear(48*56*56, 12)
+        self.final_layer = nn.Conv2d(
+            in_channels=pre_stage_channels[0],
+            out_channels=12,
+            kernel_size=1,
+            stride=1,
+            padding=0
+        )
+
+        self.fc = nn.Linear(12*56*56, 12)
 
         # self.pretrained_layers = cfg['MODEL']['EXTRA']['PRETRAINED_LAYERS']
 
@@ -473,9 +481,9 @@ class PoseHighResolutionNet(nn.Module):
         y_list = self.stage4(x_list)
         
         x = y_list[0]
-        x = x.reshape(x.size(0), -1)
         x = self.final_layer(x)
-
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
         return x
 
     def init_weights(self, pretrained=''):

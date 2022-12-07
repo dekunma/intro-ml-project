@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 import argparse
 
-from utils.model_utils import name2model
+from utils.model_utils import get_model
 from utils.dataset_utils import get_dataset
 import yaml
 
@@ -31,7 +31,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         print('Using config file: {}'.format(config))
         print(current_config)
     
-    model = name2model[current_config['model_name']]()
+    model = get_model(current_config['model_name'])
     model.to(device)
 
     dataset = get_dataset(current_config['model_name'], 'train', dataroot, mode)

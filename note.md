@@ -1,0 +1,1 @@
+- 12/06: resnet152 epoch 160-180 performance not better than that of 140. (maybe because of the learning rate decay or overfitting). Need to submit resnet_1_epoch_140 for test tomorrow.

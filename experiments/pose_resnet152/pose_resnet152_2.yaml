@@ -1,0 +1,15 @@
+# Same as my first attempt hyper paramters of resnet152 (w/ more epochs). To see if pose resnet152 can achieve as good result.
+
+experiment_name: pose_resnet152_2
+model_name: pose_resnet152
+
+batch_size: 32
+num_epochs: 140
+lr: 0.001
+lr_factor: 0.5
+lr_step:
+- 30
+- 60
+- 90
+- 120
+resume: null

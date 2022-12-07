@@ -1,3 +1,5 @@
+# Suggested by https://github.com/HRNet/HRNet-Human-Pose-Estimation
+
 experiment_name: pose_resnet152_1
 model_name: pose_resnet152
 

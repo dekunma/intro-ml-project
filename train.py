@@ -5,8 +5,7 @@ from tqdm import tqdm
 
 import argparse
 
-from utils.model_utils import get_model
-from utils.dataset_utils import get_dataset
+from utils import get_model, get_dataset, get_loss_fn
 import yaml
 
 def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=None):
@@ -22,6 +21,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         'lr_step': [30, 60, 90],
         'resume': resume,
         'num_epochs': num_epochs,
+        'loss_fn': 'mse',
     }
 
     # load config
@@ -42,7 +42,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         
     optimizer = torch.optim.Adam(model.parameters(), lr=current_config['lr'])
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, current_config['lr_step'], current_config['lr_factor'])
-    loss_function = nn.MSELoss()
+    loss_function = get_loss_fn(current_config['loss_fn'])
 
     log_path = f'logs/{current_config["experiment_name"]}'
     os.makedirs(log_path, exist_ok=True)

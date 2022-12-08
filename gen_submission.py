@@ -4,14 +4,13 @@ from tqdm import tqdm
 import argparse
 import os
 
-from utils.model_utils import name2model
-from utils.dataset_utils import get_dataset
+from utils import get_model, get_dataset, get_loss_fn
 
 def main(model_name, epoch, dataroot, model_path):
     dataset = get_dataset(model_name, 'test', dataroot=dataroot, mode='full')
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=1)
 
-    model = name2model[model_name]()
+    model = get_model(model_name)
     model.load_state_dict(torch.load(os.path.join('logs', model_path, f'{model_name}_{epoch}.pth'))['model_state_dict'])
     
     log_base_dir = os.path.join('submissions', model_path)

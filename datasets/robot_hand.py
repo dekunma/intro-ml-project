@@ -11,7 +11,10 @@ class RobotHandDataset:
         self.dataroot = dataroot
 
         self.transforms_rgb = transforms.Compose([
-            transforms.ToTensor(), 
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean = [0.435, 0.462, 0.485],
+                std= [0.236, 0.221, 0.223])
         ])
 
         self.transforms_depth = self._normalize_depth_global

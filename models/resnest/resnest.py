@@ -10,6 +10,8 @@
 import torch
 from .resnet import ResNet, Bottleneck
 
+import torch.nn as nn
+
 __all__ = ['resnest50', 'resnest101', 'resnest200', 'resnest269']
 
 _url_format = 'https://github.com/zhanghang1989/ResNeSt/releases/download/weights_step1/{}-{}.pth'
@@ -60,12 +62,27 @@ def resnest200(pretrained=False, root='~/.encoding/models', **kwargs):
             resnest_model_urls['resnest200'], progress=True, check_hash=True))
     return model
 
-def resnest269(pretrained=False, root='~/.encoding/models', **kwargs):
+def resnest269(pretrained=True, root='~/.encoding/models', **kwargs):
     model = ResNet(Bottleneck, [3, 30, 48, 8],
                    radix=2, groups=1, bottleneck_width=64,
                    deep_stem=True, stem_width=64, avg_down=True,
-                   avd=True, avd_first=False, num_classes=12, **kwargs)
+                   avd=True, avd_first=False, num_classes=1000, **kwargs)
     if pretrained:
         model.load_state_dict(torch.hub.load_state_dict_from_url(
             resnest_model_urls['resnest269'], progress=True, check_hash=True))
+
+    conv_layer = nn.Conv2d
+    stem_width=64
+    norm_layer=nn.BatchNorm2d
+    model.conv1 = nn.Sequential(
+            conv_layer(12, stem_width, kernel_size=3, stride=2, padding=1, bias=False),
+            norm_layer(stem_width),
+            nn.ReLU(inplace=True),
+            conv_layer(stem_width, stem_width, kernel_size=3, stride=1, padding=1, bias=False),
+            norm_layer(stem_width),
+            nn.ReLU(inplace=True),
+            conv_layer(stem_width, stem_width*2, kernel_size=3, stride=1, padding=1, bias=False),
+        )
+    model.fc = nn.Linear(2048, 12)
+    
     return model

@@ -19,6 +19,7 @@ def get_model(model_name):
         'pose_resnet152': models.poseresnet152,
         'hrnet': models.get_hrnet,
         'resnest269': models.resnest.resnest269,
+        'convnext': models.convnext.convnext_xlarge,
     }
 
     if model_name not in name2model:

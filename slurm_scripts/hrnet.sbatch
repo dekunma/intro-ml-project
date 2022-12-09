@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=2               
-#SBATCH --time=5:00:00                  
+#SBATCH --time=6:00:00                  
 #SBATCH --mem=16GB
 #SBATCH --job-name=hrnet
 #SBATCH --output=/scratch/dm4524/intro-ml-project/logs/hrnet_1/hrnet_1.out

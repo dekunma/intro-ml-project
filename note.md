@@ -1,1 +1,5 @@
 - 12/06: resnet152 epoch 160-180 performance not better than that of 140. (maybe because of the learning rate decay or overfitting). Need to submit resnet_1_epoch_140 for test tomorrow.
+- 12/07: need to try depth image global normalization vs. per-image normalization.
+- 12/08: after having normalization, the performance of resnest269 was way better.
+- 12/08: need to submit hrnet_1 epoch 200 and 210.
+- 12/08: resnest269 using smoothl1loss, performance not able to increase after ~90 epochs, and performance was not as good as MSE loss. Need to submit resnet269's 185&175

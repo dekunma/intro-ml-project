@@ -31,6 +31,12 @@ class RobotHandDataset:
         min_depth = 0
         max_depth = 65.535
         depth_img = (depth_img - min_depth) / (max_depth - min_depth)
+
+        # if self.split == 'train':
+        #     rand_dot_percentage = 0.15
+        #     p = np.random.rand() * rand_dot_percentage
+        #     depth_img = self._pix_dropout(depth_img, background_value=1, P=p, V=1)
+
         return depth_img
 
     def _normalize_depth_per_image(self, depth_img):
@@ -38,7 +44,25 @@ class RobotHandDataset:
         min_depth = np.min(depth_img)
         max_depth = np.max(depth_img)
         depth_img = (depth_img - min_depth) / (max_depth - min_depth)
+
         return depth_img
+
+    def _pix_dropout(self, img,background_value,P,V=1):
+        # image is a tensor of size (1,H,W)
+        # background_value denotes the value using which the foreground pixels are computed
+        # P is the percentage of foreground pixels that are assigned the value V
+
+        # returns the same image with P percentage of its foregrounds pixels set to the value V
+
+        img = img.clone()
+        mask=abs(img[0]-background_value)>1e-6 # locate foreground pixels
+        y,x=np.where(mask) # get their pixel coordinates
+
+        num_pix=np.int32(P*len(y))
+        indecies_toSet=np.random.choice(len(x),size=num_pix,replace=False)
+        img[0,y[indecies_toSet],x[indecies_toSet]]=V
+
+        return img
 
     def __getitem__(self, idx):
         if self.mode == 'tail':
@@ -53,8 +77,8 @@ class RobotHandDataset:
             rgb_img = self.transforms_rgb(rgb_img)
 
             depth_img = np.load(os.path.join(base_path_x, 'depth.npy'))[ii]
-            depth_img = self.transforms_depth(depth_img)
             depth_img = torch.from_numpy(depth_img).unsqueeze(0)
+            depth_img = self.transforms_depth(depth_img)
             if image_input == None:
                 image_input = torch.cat((rgb_img, depth_img), dim=0)
             else:

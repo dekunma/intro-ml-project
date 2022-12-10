@@ -1,0 +1,13 @@
+experiment_name: convnext_1
+model_name: convnext
+
+batch_size: 32
+num_epochs: 150
+lr: 0.0001
+lr_factor: 0.7
+lr_step:
+- 30
+- 60
+- 90
+- 120
+resume: null

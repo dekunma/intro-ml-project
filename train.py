@@ -41,6 +41,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
     data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=current_config['batch_size'], shuffle=False, num_workers=2)
         
     optimizer = torch.optim.Adam(model.parameters(), lr=current_config['lr'])
+    # optimizer = torch.optim.AdamW(model.parameters(), lr=current_config['lr'], betas=(0.9, 0.999), weight_decay=0.05)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, current_config['lr_step'], current_config['lr_factor'])
     loss_function = get_loss_fn(current_config['loss_fn'])
 

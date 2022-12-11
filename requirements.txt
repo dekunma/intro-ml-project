@@ -7,3 +7,5 @@ pandas
 pretrainedmodels
 pyyaml
 timm
+"ray[tune]"
+bayesian-optimization

@@ -1,0 +1,15 @@
+# same as resnest269 0.00217 group, but to test depth norm [-1, 1]
+# result: not as good as [0, 1]
+
+experiment_name: resnest269_4
+model_name: resnest269
+
+batch_size: 32
+num_epochs: 180
+lr: 0.001
+lr_factor: 0.5
+lr_step:
+- 30
+- 60
+- 90
+resume: null

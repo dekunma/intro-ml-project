@@ -1,0 +1,12 @@
+# suggested by https://arxiv.org/pdf/2004.08955.pdf in pose estimation section
+experiment_name: resnest269_6
+model_name: resnest269
+
+batch_size: 32
+num_epochs: 180
+lr: 0.001
+lr_factor: 0.1
+lr_step:
+- 90
+- 120
+resume: null

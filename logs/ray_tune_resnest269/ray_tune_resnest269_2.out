@@ -1,0 +1,91 @@
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+2022-12-10 16:27:52,945	INFO worker.py:1528 -- Started a local Ray instance.
+2022-12-10 16:28:08,078	WARNING function_trainable.py:587 -- Function checkpointing is disabled. This may result in unexpected behavior when using checkpointing features or certain schedulers. To enable, set the train function arguments to be `func(config, checkpoint_dir=None)`.
+2022-12-10 16:28:08,084	WARNING bayesopt_search.py:425 -- BayesOpt does not support specific sampling methods. The Uniform sampler will be dropped.
+2022-12-10 16:28:08,084	WARNING bayesopt_search.py:425 -- BayesOpt does not support specific sampling methods. The Uniform sampler will be dropped.
+2022-12-10 16:28:08,084	WARNING bayesopt_search.py:425 -- BayesOpt does not support specific sampling methods. The Uniform sampler will be dropped.
+2022-12-10 16:28:08,084	WARNING bayesopt_search.py:425 -- BayesOpt does not support specific sampling methods. The Uniform sampler will be dropped.
+2022-12-10 16:29:34,322	WARNING util.py:244 -- The `process_trial_result` operation took 1.546 s, which may be a performance bottleneck.
+2022-12-10 17:17:04,495	ERROR trial_runner.py:993 -- Trial train_8e80fa94: Error processing event.
+ray.exceptions.RayTaskError(ValueError): [36mray::ImplicitFunc.train()[39m (pid=2336066, ip=10.32.35.75, repr=train)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/trainable.py", line 355, in train
+    raise skipped from exception_cause(skipped)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/function_trainable.py", line 328, in entrypoint
+    self._status_reporter.get_checkpoint(),
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/function_trainable.py", line 651, in _trainable_func
+    output = fn()
+  File "ray_tune_resnest269.py", line 44, in train
+    output = model(imgs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/intro-ml-project/models/resnest/resnet.py", line 304, in forward
+    x = self.layer1(x)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/container.py", line 204, in forward
+    input = module(input)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/intro-ml-project/models/resnest/resnet.py", line 117, in forward
+    out = self.conv2(out)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/intro-ml-project/models/resnest/splat.py", line 72, in forward
+    gap = self.bn1(gap)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/batchnorm.py", line 182, in forward
+    self.eps,
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/functional.py", line 2448, in batch_norm
+    _verify_batch_size(input.size())
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/functional.py", line 2416, in _verify_batch_size
+    raise ValueError("Expected more than 1 value per channel when training, got input size {}".format(size))
+ValueError: Expected more than 1 value per channel when training, got input size torch.Size([1, 32, 1, 1])
+2022-12-10 18:04:12,586	ERROR trial_runner.py:993 -- Trial train_608af728: Error processing event.
+ray.exceptions.RayTaskError(OutOfMemoryError): [36mray::ImplicitFunc.train()[39m (pid=2360851, ip=10.32.35.75, repr=train)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/trainable.py", line 355, in train
+    raise skipped from exception_cause(skipped)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/function_trainable.py", line 328, in entrypoint
+    self._status_reporter.get_checkpoint(),
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/ray/tune/trainable/function_trainable.py", line 651, in _trainable_func
+    output = fn()
+  File "ray_tune_resnest269.py", line 44, in train
+    output = model(imgs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/intro-ml-project/models/resnest/resnet.py", line 306, in forward
+    x = self.layer3(x)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/container.py", line 204, in forward
+    input = module(input)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/intro-ml-project/models/resnest/resnet.py", line 127, in forward
+    out = self.conv3(out)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1190, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/conv.py", line 463, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/scratch/dm4524/miniconda3/envs/cs473/lib/python3.7/site-packages/torch/nn/modules/conv.py", line 460, in _conv_forward
+    self.padding, self.dilation, self.groups)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 84.00 MiB (GPU 0; 44.49 GiB total capacity; 41.58 GiB already allocated; 25.12 MiB free; 42.78 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+slurmstepd: error: *** JOB 28002816 ON gr011 CANCELLED AT 2022-12-10T21:37:24 ***

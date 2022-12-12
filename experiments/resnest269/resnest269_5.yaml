@@ -1,11 +1,11 @@
-# best config
-experiment_name: resnest269_1
+# based on group 1, with less lr decay
+experiment_name: resnest269_5
 model_name: resnest269
 
 batch_size: 32
 num_epochs: 180
 lr: 0.001
-lr_factor: 0.5
+lr_factor: 0.7
 lr_step:
 - 30
 - 60

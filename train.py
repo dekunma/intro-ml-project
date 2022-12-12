@@ -8,6 +8,8 @@ import argparse
 from utils import get_model, get_dataset, get_loss_fn, get_optimizer
 import yaml
 
+import pytorch_warmup as warmup
+
 def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=None):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -23,6 +25,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
         'num_epochs': num_epochs,
         'loss_fn': 'mse',
         'optimizer': 'adam',
+        'warmup_period': 20,
     }
 
     # load config
@@ -42,9 +45,14 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
     data_loader_eval = torch.utils.data.DataLoader(dataset_eval, batch_size=current_config['batch_size'], shuffle=False, num_workers=2)
         
     optimizer = get_optimizer(current_config['optimizer'], model.parameters(), lr=current_config['lr'])
-    # optimizer = torch.optim.AdamW(model.parameters(), lr=current_config['lr'], betas=(0.9, 0.999), weight_decay=0.05)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, current_config['lr_step'], current_config['lr_factor'])
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=180) # for resnest269
+
+    if current_config['model_name'] == 'convnext':
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=180)
+        warmup_scheduler = warmup.LinearWarmup(optimizer, warmup_period=current_config['warmup_period'])
+    else:
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, current_config['lr_step'], current_config['lr_factor'])
+
+
     loss_function = get_loss_fn(current_config['loss_fn'])
 
     log_path = f'logs/{current_config["experiment_name"]}'
@@ -97,7 +105,12 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
                 
                 eval_loss /= len(data_loader_eval)
         
-        scheduler.step()
+        if current_config['model_name'] == 'convnext':
+            with warmup_scheduler.dampening():
+                scheduler.step()
+        else:
+            scheduler.step()
+
         log_text = f'Epoch: {epoch+1}, Loss: {epoch_loss}, Eval Loss: {eval_loss}'
         print(log_text)
 

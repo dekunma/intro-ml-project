@@ -44,6 +44,8 @@ def get_optimizer(optimizer_name, params, lr):
         return torch.optim.Adam(params, lr=lr)
     elif optimizer_name == 'sgd':
         return torch.optim.SGD(params, lr=lr, momentum=0.9, weight_decay=1e-4)
+    elif optimizer_name == 'adamW':
+        return torch.optim.AdamW(params, lr=lr, betas=(0.9, 0.999), weight_decay=0.05) # for resnest 269
 
 def get_scheduler(scheduler_name, optimizer):
     if scheduler_name == 'step':

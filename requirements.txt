@@ -9,3 +9,4 @@ pyyaml
 timm
 "ray[tune]"
 bayesian-optimization
+pytorch_warmup

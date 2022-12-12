@@ -1,6 +1,7 @@
 # https://arxiv.org/pdf/2201.03545.pdf
 # train with 70% of the data to see the performance on the evaluation set
-experiment_name: convnext_2
+# more shorter warm up (5 epochs)
+experiment_name: convnext_5
 model_name: convnext
 
 batch_size: 32
@@ -8,4 +9,4 @@ num_epochs: 180
 lr: 0.004
 optimizer: adamW
 resume: null
-warmup_period: 20
+warmup_period: 5

@@ -1,6 +1,8 @@
 # https://arxiv.org/pdf/2201.03545.pdf
 # train with 70% of the data to see the performance on the evaluation set
-experiment_name: convnext_2
+# longer warm up (30 epochs)
+# result: probably too late to start decay at epoch 30
+experiment_name: convnext_3
 model_name: convnext
 
 batch_size: 32
@@ -8,4 +10,4 @@ num_epochs: 180
 lr: 0.004
 optimizer: adamW
 resume: null
-warmup_period: 20
+warmup_period: 30

@@ -32,6 +32,9 @@ class RobotHandDataset:
         max_depth = 65.535
         depth_img = (depth_img - min_depth) / (max_depth - min_depth)
 
+        # normalize to [-1, 1]
+        # depth_img = depth_img * 2 - 1
+
         # if self.split == 'train':
         #     rand_dot_percentage = 0.15
         #     p = np.random.rand() * rand_dot_percentage

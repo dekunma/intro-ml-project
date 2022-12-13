@@ -10,11 +10,14 @@ class RobotHandDataset:
         self.split = split
         self.dataroot = dataroot
 
-        self.transforms_rgb = transforms.Compose([
+        self.transforms_rgb1 = transforms.Compose([
             transforms.ToTensor(),
+        ])
+
+        self.transforms_rgb2 = transforms.Compose([
             transforms.Normalize(
-                mean = [0.435, 0.462, 0.485],
-                std= [0.236, 0.221, 0.223])
+                mean = [0.396, 0.417, 0.435, 0.470, 0.488, 0.501, 0.441, 0.482, 0.519],
+                std = [0.212, 0.199, 0.200, 0.242, 0.225, 0.228, 0.247, 0.229, 0.230])
         ])
 
         self.transforms_depth = self._normalize_depth_global
@@ -73,19 +76,15 @@ class RobotHandDataset:
 
         base_path_x = os.path.join(self.base_path, 'X', str(idx))
         
-        image_input = None
+        rgb_imgs = [Image.open(os.path.join(base_path_x, f'rgb/{ii}.png')) for ii in range(3)]
+        rgb_imgs = [self.transforms_rgb1(img) for img in rgb_imgs]
+        rgb_imgs = torch.cat(rgb_imgs, dim=0)
+        rgb_imgs = self.transforms_rgb2(rgb_imgs)
 
-        for ii in [0,1,2]:
-            rgb_img = Image.open(os.path.join(base_path_x, f'rgb/{ii}.png'))
-            rgb_img = self.transforms_rgb(rgb_img)
-
-            depth_img = np.load(os.path.join(base_path_x, 'depth.npy'))[ii]
-            depth_img = torch.from_numpy(depth_img).unsqueeze(0)
-            depth_img = self.transforms_depth(depth_img)
-            if image_input == None:
-                image_input = torch.cat((rgb_img, depth_img), dim=0)
-            else:
-                image_input = torch.cat((image_input, rgb_img, depth_img), dim=0)
+        depth_img = np.load(os.path.join(base_path_x, 'depth.npy'))
+        depth_img = torch.from_numpy(depth_img)
+        depth_img = self.transforms_depth(depth_img)
+        image_input = torch.cat((rgb_imgs, depth_img), dim=0)
 
         # field id
         if len(self.field_ids) != self.dataset_len:

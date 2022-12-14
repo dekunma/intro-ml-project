@@ -116,7 +116,7 @@ def main(model_name, dataroot, num_epochs=10, mode='head', resume=None, config=N
 
         log_file.write(log_text + '\n')
 
-        if (epoch + 1) % 5 == 0 or (epoch + 1) == current_config['num_epochs'] or epoch == 0:
+        if (epoch + 1) % 5 == 0 or (epoch + 1) == current_config['num_epochs'] or epoch == 0 or (epoch + 1) >= 170:
             save_dict = {
                 "epoch": epoch,
                 "model_state_dict": model.state_dict(),

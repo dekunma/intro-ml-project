@@ -3,7 +3,7 @@ experiment_name: resnest269_1
 model_name: resnest269
 
 batch_size: 32
-num_epochs: 180
+num_epochs: 200
 lr: 0.001
 lr_factor: 0.5
 lr_step:

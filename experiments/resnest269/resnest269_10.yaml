@@ -1,0 +1,13 @@
+# same as group 1, except for the batch size (lowered to 16)
+experiment_name: resnest269_10
+model_name: resnest269
+
+batch_size: 16
+num_epochs: 180
+lr: 0.001
+lr_factor: 0.5
+lr_step:
+- 30
+- 60
+- 90
+resume: null

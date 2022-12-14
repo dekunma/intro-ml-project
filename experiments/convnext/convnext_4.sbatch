@@ -8,4 +8,4 @@
 
 cd /scratch/dm4524/intro-ml-project
 conda activate cs473
-python train.py --config=./experiments/convnext/convnext_4.yaml --mode=head
+python train.py --config=./experiments/convnext/convnext_4.yaml --mode=full

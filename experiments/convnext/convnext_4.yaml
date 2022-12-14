@@ -1,5 +1,4 @@
 # https://arxiv.org/pdf/2201.03545.pdf
-# train with 70% of the data to see the performance on the evaluation set
 # shorter warm up (10 epochs)
 experiment_name: convnext_4
 model_name: convnext
